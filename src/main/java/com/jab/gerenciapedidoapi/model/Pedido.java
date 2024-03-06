@@ -1,17 +1,35 @@
 package com.jab.gerenciapedidoapi.model;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "pedidos")
 public class Pedido {
 	
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
-	private Double valorTotal;
-	private List<ItensPedido> intensPedido;
 	
-	public Pedido(Double valorTotal, List<ItensPedido> intensPedido) {
+	@Column(name = "valor_total")
+	private Double valorTotal;
+	
+	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+	private Set<ItemPedido> itemPedido = new HashSet<>();
+	
+	public Pedido(Double valorTotal, Set<ItemPedido> itensPedido) {
 		this.valorTotal = valorTotal;
-		this.intensPedido = intensPedido;
+		this.itemPedido = itensPedido;
 	}
 
 	public UUID getId() {
@@ -29,13 +47,13 @@ public class Pedido {
 	public void setValorTotal(Double valorTotal) {
 		this.valorTotal = valorTotal;
 	}
-
-	public List<ItensPedido> getIntensPedido() {
-		return intensPedido;
+	
+	public Set<ItemPedido> getItemPedido() {
+		return itemPedido;
 	}
 
-	public void setIntensPedido(List<ItensPedido> intensPedido) {
-		this.intensPedido = intensPedido;
+	public void setItemPedido(Set<ItemPedido> itemPedido) {
+		this.itemPedido = itemPedido;
 	}
 	
 }

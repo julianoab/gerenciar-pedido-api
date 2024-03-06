@@ -1,8 +1,13 @@
 package com.jab.gerenciapedidoapi.resource;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +22,13 @@ public class PedidoResource {
 	private PedidoService pedidoService;
 	
 	@GetMapping
-	public ResponseEntity<Pedido> listar() {
-		Pedido pedido = pedidoService.criar();
-		return ResponseEntity.ok(pedido);
+	public ResponseEntity<List<Pedido>> listar() {
+		return ResponseEntity.ok(pedidoService.listar());
+	}
+	
+	@PostMapping
+	public ResponseEntity<Pedido> criar(@RequestBody Pedido pedido) {
+		Pedido pedidoSalvo = pedidoService.salvar(pedido);
+		return ResponseEntity.status(HttpStatus.CREATED).body(pedidoSalvo);
 	}
 }

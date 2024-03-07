@@ -13,6 +13,8 @@ import com.jab.gerenciapedidoapi.repository.ItemPedidoRepository;
 import com.jab.gerenciapedidoapi.repository.PedidoRepository;
 import com.jab.gerenciapedidoapi.repository.ProdutoServicoRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PedidoService {
 	
@@ -28,13 +30,13 @@ public class PedidoService {
 	public List<Pedido> listar() {
 		return pedidoRepository.findAll();
 	}
-
+	
+	@Transactional
 	public Pedido salvar(Pedido pedido) {
-		UUID id = UUID.fromString("41beed09-078b-48ee-b686-ead855fa207c");
 		
 		for (ItemPedido itemPedido : pedido.getItemPedido()) {
 			
-			 ProdutoServico produtoServico = produtoServicoRepository.getReferenceById(id);
+			 ProdutoServico produtoServico = produtoServicoRepository.findById(itemPedido.getProdutoServico().getId()).get();
 			 itemPedido.setProdutoServico(produtoServico);
 			 itemPedido.setPedido(pedido);
 			 itemPedidoRepository.save(itemPedido);

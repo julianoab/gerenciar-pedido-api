@@ -3,6 +3,7 @@ package com.jab.gerenciapedidoapi.model;
 import java.util.Objects;
 import java.util.UUID;
 
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,19 +13,22 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "itens_pedido")
+@Table(name = "item_pedido")
 public class ItemPedido {
 	
-	@Id
+	@EmbeddedId
+	private ItemPedidoId id;
+	
+	/*@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID id;
+	private UUID id;*/
 	
 	@ManyToOne
-	@JoinColumn(name = "codigo_produto_servico")
+	@JoinColumn(name = "produto_servico_id", insertable=false, updatable=false)
 	private ProdutoServico produtoServico;
 	
 	@ManyToOne
-	@JoinColumn(name = "codigo_pedido")
+	@JoinColumn(name = "pedido_id", insertable=false, updatable=false)
 	private Pedido pedido;
 	
 	private Integer quantidade;
@@ -38,13 +42,13 @@ public class ItemPedido {
 		this.quantidade = quantidade;
 	}
 
-	public UUID getId() {
-		return id;
-	}
-	
-	public void setId(UUID id) {
-		this.id = id;
-	}
+//	public UUID getId() {
+//		return id;
+//	}
+//	
+//	public void setId(UUID id) {
+//		this.id = id;
+//	}
 	
 	public ProdutoServico getProdutoServico() {
 		return produtoServico;

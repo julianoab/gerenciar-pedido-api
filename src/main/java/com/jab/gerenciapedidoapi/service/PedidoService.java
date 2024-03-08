@@ -1,19 +1,18 @@
 package com.jab.gerenciapedidoapi.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.jab.gerenciapedidoapi.model.Item;
 import com.jab.gerenciapedidoapi.model.ItemPedido;
 import com.jab.gerenciapedidoapi.model.Pedido;
-import com.jab.gerenciapedidoapi.model.ProdutoServico;
 import com.jab.gerenciapedidoapi.repository.ItemPedidoRepository;
+import com.jab.gerenciapedidoapi.repository.ItemRepository;
 import com.jab.gerenciapedidoapi.repository.PedidoRepository;
-import com.jab.gerenciapedidoapi.repository.ProdutoServicoRepository;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class PedidoService {
@@ -25,7 +24,7 @@ public class PedidoService {
 	ItemPedidoRepository itemPedidoRepository;
 	
 	@Autowired
-	ProdutoServicoRepository produtoServicoRepository;
+	ItemRepository itemRepository;
 	
 	public List<Pedido> listar() {
 		return pedidoRepository.findAll();
@@ -33,15 +32,19 @@ public class PedidoService {
 	
 	@Transactional
 	public Pedido salvar(Pedido pedido) {
+		Pedido pedidoSalvo = null;
+		if (pedido != null) {
+		   
+			pedidoSalvo = pedidoRepository.save(pedido);
 		
-		for (ItemPedido itemPedido : pedido.getItemPedido()) {
+			for (ItemPedido itemPedido : pedido.getItens()) {
+				 Item item = itemRepository.findById(itemPedido.getItem().getId()).get();
+				 itemPedido.setItem(item);
+				 itemPedido.setPedido(pedidoSalvo);
+			}
 			
-			 ProdutoServico produtoServico = produtoServicoRepository.findById(itemPedido.getProdutoServico().getId()).get();
-			 itemPedido.setProdutoServico(produtoServico);
-			 itemPedido.setPedido(pedido);
-			 itemPedidoRepository.save(itemPedido);
-			 
+			itemPedidoRepository.saveAll(pedido.getItens());
 		}
-		return pedidoRepository.save(pedido);
+		return pedidoSalvo;
 	}
 }

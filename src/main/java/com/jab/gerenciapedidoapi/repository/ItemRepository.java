@@ -5,9 +5,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.jab.gerenciapedidoapi.model.ProdutoServico;
+import com.jab.gerenciapedidoapi.model.Item;
 
 @Repository
-public interface ProdutoServicoRepository extends JpaRepository<ProdutoServico, UUID> {
+public interface ItemRepository extends JpaRepository<Item, UUID> {
 
 }

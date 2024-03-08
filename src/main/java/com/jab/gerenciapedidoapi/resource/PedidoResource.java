@@ -23,6 +23,8 @@ public class PedidoResource {
 	
 	@GetMapping
 	public ResponseEntity<List<Pedido>> listar() {
+		List<Pedido> listaPedido = pedidoService.listar();
+		listaPedido.forEach(pedido -> System.err.println("pedido: " + pedido.toString()));
 		return ResponseEntity.ok(pedidoService.listar());
 	}
 	

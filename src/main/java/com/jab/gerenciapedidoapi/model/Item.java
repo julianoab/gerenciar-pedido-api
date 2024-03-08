@@ -1,8 +1,12 @@
 package com.jab.gerenciapedidoapi.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -16,17 +20,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "produto_servico")
-public class ProdutoServico {
+@Table(name = "item")
+public class Item implements Serializable {
 	
-	/*
-	 * @Id
-	 * 
-	 * @GeneratedValue(generator = "UUID")
-	 * 
-	 * @Column(name = "id", nullable=false, insertable = false,
-	 * columnDefinition="uuid DEFAULT uuid_generate_v4()")
-	 */
+	private static final long serialVersionUID = 1L;
+	
 	@Id
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,18 +35,19 @@ public class ProdutoServico {
 	private Double preco;
 	
 	@Enumerated(EnumType.STRING)
-	private Tipo tipo;
+	private TipoItem tipoItem;
 	
-	@OneToMany(mappedBy = "produtoServico", cascade = CascadeType.ALL)
+	//@JsonManagedReference
+	@OneToMany(mappedBy = "item")
 	private Set<ItemPedido> itemPedido = new HashSet<>();
 	
-	public ProdutoServico() {};
+	public Item() {};
 	
-	public ProdutoServico(UUID id, String nome, Double preco, Tipo tipo) {
+	public Item(UUID id, String nome, Double preco, TipoItem tipoItem) {
 		this.id = id;
 		this.nome = nome;
 		this.preco = preco;
-		this.tipo = tipo;
+		this.tipoItem = tipoItem;
 	}
 
 	public UUID getId() {
@@ -75,12 +74,12 @@ public class ProdutoServico {
 		this.preco = preco;
 	}
 
-	public Tipo getTipo() {
-		return tipo;
+	public TipoItem getTipo() {
+		return tipoItem;
 	}
 
-	public void setTipo(Tipo tipo) {
-		this.tipo = tipo;
+	public void setTipo(TipoItem tipoItem) {
+		this.tipoItem = tipoItem;
 	}
 
 	public Set<ItemPedido> getItemPedido() {
@@ -90,5 +89,19 @@ public class ProdutoServico {
 	public void setItemPedido(Set<ItemPedido> itemPedido) {
 		this.itemPedido = itemPedido;
 	}
+
+	/*
+	 * @Override public int hashCode() { return Objects.hash(id); }
+	 * 
+	 * @Override public boolean equals(Object obj) { if (this == obj) return true;
+	 * if (obj == null) return false; if (getClass() != obj.getClass()) return
+	 * false; Item other = (Item) obj; return Objects.equals(id, other.id); }
+	 */
+
+	/*
+	 * @Override public String toString() { return "Item [id=" + id + ", nome=" +
+	 * nome + ", preco=" + preco + ", tipoItem=" + tipoItem + ", itemPedido=" +
+	 * itemPedido + "]"; }
+	 */
 	
 }

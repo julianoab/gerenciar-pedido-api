@@ -6,25 +6,25 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.jab.gerenciapedidoapi.model.ProdutoServico;
-import com.jab.gerenciapedidoapi.repository.ProdutoServicoRepository;
+import com.jab.gerenciapedidoapi.model.Item;
+import com.jab.gerenciapedidoapi.repository.ItemRepository;
 
 @Service
-public class ProdutoServicoService {
+public class ItemService {
 	
 	@Autowired
-	private ProdutoServicoRepository produtoServicoRepository;
+	private ItemRepository produtoServicoRepository;
 	
-	public List<ProdutoServico> listar() {
+	public List<Item> listar() {
 		return produtoServicoRepository.findAll();
 	}
 	
-	public ProdutoServico salvar(ProdutoServico produtoServico) {
+	public Item salvar(Item produtoServico) {
 		return produtoServicoRepository.save(produtoServico);
 	}
 	
-	public Optional<ProdutoServico> buscarPorId(String id) {
-		Optional<ProdutoServico> produto = produtoServicoRepository.findById(UUID.fromString(id));
+	public Optional<Item> buscarPorId(String id) {
+		Optional<Item> produto = produtoServicoRepository.findById(UUID.fromString(id));
 		System.out.println("Nome produto: " + produto.get().getNome());
 		return produtoServicoRepository.findById(UUID.fromString(id));
 	}

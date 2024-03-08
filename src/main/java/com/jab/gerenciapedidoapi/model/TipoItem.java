@@ -1,6 +1,6 @@
 package com.jab.gerenciapedidoapi.model;
 
-public enum Tipo {
+public enum TipoItem {
 	
 	PRODUTO,
 	SERVICO

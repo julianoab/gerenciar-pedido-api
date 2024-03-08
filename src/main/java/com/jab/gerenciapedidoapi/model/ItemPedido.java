@@ -1,9 +1,12 @@
 package com.jab.gerenciapedidoapi.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-import jakarta.persistence.EmbeddedId;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,48 +17,51 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "item_pedido")
-public class ItemPedido {
+public class ItemPedido implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@Id
+    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
 	
-	@EmbeddedId
-	private ItemPedidoId id;
-	
-	/*@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID id;*/
-	
+//	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "produto_servico_id", insertable=false, updatable=false)
-	private ProdutoServico produtoServico;
+	@JoinColumn(name = "item_id")
+	private Item item;
 	
+	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "pedido_id", insertable=false, updatable=false)
+	@JoinColumn(name = "pedido_id")
 	private Pedido pedido;
 	
 	private Integer quantidade;
 
-	public ItemPedido() {
-	}
+	public ItemPedido() {}
+	
 
-	public ItemPedido(ProdutoServico produtoServico, Pedido pedido, Integer quantidade) {
-		this.produtoServico = produtoServico;
+	public ItemPedido(UUID id, Item item, Pedido pedido, Integer quantidade) {
+		this.id = id;
+		this.item = item;
 		this.pedido = pedido;
 		this.quantidade = quantidade;
 	}
 
-//	public UUID getId() {
-//		return id;
-//	}
-//	
-//	public void setId(UUID id) {
-//		this.id = id;
-//	}
-	
-	public ProdutoServico getProdutoServico() {
-		return produtoServico;
+	public UUID getId() {
+		return id;
 	}
 
-	public void setProdutoServico(ProdutoServico produtoServico) {
-		this.produtoServico = produtoServico;
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+	public Item getItem() {
+		return item;
+	}
+
+	public void setItem(Item item) {
+		this.item = item;
 	}
 
 	public Integer getQuantidade() {
@@ -90,5 +96,10 @@ public class ItemPedido {
 		ItemPedido other = (ItemPedido) obj;
 		return Objects.equals(id, other.id);
 	}
-	
+
+
+	@Override
+	public String toString() {
+		return "ItemPedido [id=" + id + ", item=" + item + ", pedido=" + pedido + ", quantidade=" + quantidade + "]";
+	}
 }

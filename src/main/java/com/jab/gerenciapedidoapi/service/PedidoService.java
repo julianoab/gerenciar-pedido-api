@@ -50,6 +50,7 @@ public class PedidoService {
 	
 	@Transactional
 	public Pedido salvar(Pedido pedido) {
+		
 		Pedido pedidoSalvo = null;
 		Double valorDesconto = 0.0;
 		
@@ -58,14 +59,15 @@ public class PedidoService {
 			for (ItemPedido itemPedido : pedido.getItens()) {
 				 Item item = itemRepository.findById(itemPedido.getItem().getId()).get();
 				 itemPedido.setItem(item);
-				 itemPedido.setPedido(pedidoSalvo);
+				 itemPedido.setPedido(pedido);
 			}
 		   
 			if (deveAplicarDesconto(pedido)) {
 				valorDesconto = getValorDesconto(pedido);
 			}
 			
-			pedido.setValorTotal(pedido.getValorTotal() - valorDesconto);
+			pedido.setValorTotal(calculaValorTotal(pedido.getItens()) - valorDesconto);
+			pedido.setValorDesconto(valorDesconto);
 			
 			pedidoSalvo = pedidoRepository.save(pedido);
 			
@@ -76,12 +78,12 @@ public class PedidoService {
 	}
 	
 	private boolean deveAplicarDesconto(Pedido pedido) {
-		List<ItemPedido> itensPedido = pedido.getItens().stream()
-				.filter(item -> item.getItem().getTipoItem().equals(TipoItem.PRODUTO))
-				.collect(Collectors.toList());
+		
+		List<ItemPedido> itensPedidoTipoProduto = getItensTipoProduto(pedido);
+		
 		if (pedido.getPercentualDesconto() <= 0) {
 			return false;
-		} else if (itensPedido.isEmpty()) {
+		} else if (itensPedidoTipoProduto.isEmpty()) {
 			return false;
 		} 
 		
@@ -89,19 +91,34 @@ public class PedidoService {
 	}
 	
 	private Double getValorDesconto(Pedido pedido) {
-		Double valorProdutos = 0.0;
 		
-		List<ItemPedido> itensPedidoProduto = pedido.getItens().stream()
-				.filter(item -> item.getItem().getTipoItem().equals(TipoItem.PRODUTO))
-				.collect(Collectors.toList());
+		Double valorDesconto = 0.0;
 		
-		for (ItemPedido item : itensPedidoProduto) {
-			valorProdutos += item.getItem().getPreco() * item.getQuantidade();
+		List<ItemPedido> itensPedidoTipoProduto = getItensTipoProduto(pedido);
+		
+		if (!itensPedidoTipoProduto.isEmpty() && itensPedidoTipoProduto.size() > 0) {
+			Double valorProdutos = 0.0;
+			for (ItemPedido item : itensPedidoTipoProduto) {
+				valorProdutos += item.getItem().getPreco() * item.getQuantidade();
+			}
+			valorDesconto =  pedido.getPercentualDesconto() * ( valorProdutos / 100);
 		}
 		
-		Double valorDesconto = valorProdutos * (pedido.getPercentualDesconto() / 100);
-		
 		return valorDesconto;
+	}
+	
+	private Double calculaValorTotal(List<ItemPedido> itemPedido) {
+		Double valorTotal = 0.0;
+		for (ItemPedido item : itemPedido) {
+			valorTotal += item.getItem().getPreco() * item.getQuantidade();
+		}
+		return valorTotal;
+	}
+	
+	private List<ItemPedido> getItensTipoProduto(Pedido pedido) {
+		return pedido.getItens().stream()
+				.filter(item -> item.getItem().getTipoItem().equals(TipoItem.PRODUTO))
+				.collect(Collectors.toList());
 	}
 	
 }

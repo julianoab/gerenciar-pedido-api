@@ -1,9 +1,8 @@
 package com.jab.gerenciapedidoapi.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -39,11 +38,11 @@ public class Pedido implements Serializable {
 	
 	@JsonManagedReference
 	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-	private Set<ItemPedido> itens;
+	private List<ItemPedido> itens;
 	
 	public Pedido() {}
 	
-	public Pedido(Double valorTotal, Set<ItemPedido> itens) {
+	public Pedido(Double valorTotal, List<ItemPedido> itens) {
 		this.valorTotal = valorTotal;
 		this.itens = itens;
 	}
@@ -64,15 +63,11 @@ public class Pedido implements Serializable {
 		this.valorTotal = valorTotal;
 	}
 	
-	public Set<ItemPedido> getItens() {
-		/*
-		 * Set<ItemPedido> itensRetorno = new HashSet<>(); for (ItemPedido itemPedido :
-		 * this.itens) { itensRetorno.add(itemPedido); }
-		 */
+	public List<ItemPedido> getItens() {
 		return itens;
 	}
 
-	public void setItens(Set<ItemPedido> itens) {
+	public void setItens(List<ItemPedido> itens) {
 		this.itens = itens;
 	}
 

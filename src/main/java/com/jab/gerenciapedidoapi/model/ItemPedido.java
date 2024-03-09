@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +27,6 @@ public class ItemPedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
-//	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "item_id")
 	private Item item;
@@ -71,7 +71,8 @@ public class ItemPedido implements Serializable {
 	public void setQuantidade(Integer quantidade) {
 		this.quantidade = quantidade;
 	}
-
+	
+	@JsonIgnore
 	public Pedido getPedido() {
 		return pedido;
 	}
@@ -96,10 +97,5 @@ public class ItemPedido implements Serializable {
 		ItemPedido other = (ItemPedido) obj;
 		return Objects.equals(id, other.id);
 	}
-
-
-	@Override
-	public String toString() {
-		return "ItemPedido [id=" + id + ", item=" + item + ", pedido=" + pedido + ", quantidade=" + quantidade + "]";
-	}
+	 
 }

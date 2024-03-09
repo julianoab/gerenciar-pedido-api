@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,9 +31,15 @@ public class Pedido implements Serializable {
 	@Column(name = "valor_total")
 	private Double valorTotal;
 	
+	@Column(name = "percentual_desconto")
+	private Integer percentualDesconto;
+	
+	@Column(name = "valor_desconto")
+	private Double valorDesconto;
+	
 	@JsonManagedReference
-	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<ItemPedido> itens = new HashSet<>();
+	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+	private Set<ItemPedido> itens;
 	
 	public Pedido() {}
 	
@@ -60,11 +65,31 @@ public class Pedido implements Serializable {
 	}
 	
 	public Set<ItemPedido> getItens() {
+		/*
+		 * Set<ItemPedido> itensRetorno = new HashSet<>(); for (ItemPedido itemPedido :
+		 * this.itens) { itensRetorno.add(itemPedido); }
+		 */
 		return itens;
 	}
 
 	public void setItens(Set<ItemPedido> itens) {
 		this.itens = itens;
+	}
+
+	public Integer getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(Integer percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
+
+	public Double getValorDesconto() {
+		return valorDesconto;
+	}
+
+	public void setValorDesconto(Double valorDesconto) {
+		this.valorDesconto = valorDesconto;
 	}
 
 	@Override
@@ -82,11 +107,6 @@ public class Pedido implements Serializable {
 			return false;
 		Pedido other = (Pedido) obj;
 		return Objects.equals(id, other.id);
-	}
-
-	@Override
-	public String toString() {
-		return "Pedido [id=" + id + ", valorTotal=" + valorTotal + ", itens=" + itens + "]";
 	}
 	
 }

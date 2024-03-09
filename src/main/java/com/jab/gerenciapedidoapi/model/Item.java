@@ -6,9 +6,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,14 +36,13 @@ public class Item implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoItem tipoItem;
 	
-	//@JsonManagedReference
+	@JsonIgnore
 	@OneToMany(mappedBy = "item")
 	private Set<ItemPedido> itemPedido = new HashSet<>();
 	
 	public Item() {};
 	
-	public Item(UUID id, String nome, Double preco, TipoItem tipoItem) {
-		this.id = id;
+	public Item(String nome, Double preco, TipoItem tipoItem) {
 		this.nome = nome;
 		this.preco = preco;
 		this.tipoItem = tipoItem;
@@ -74,11 +72,11 @@ public class Item implements Serializable {
 		this.preco = preco;
 	}
 
-	public TipoItem getTipo() {
+	public TipoItem getTipoItem() {
 		return tipoItem;
 	}
 
-	public void setTipo(TipoItem tipoItem) {
+	public void setTipoItem(TipoItem tipoItem) {
 		this.tipoItem = tipoItem;
 	}
 
@@ -90,18 +88,21 @@ public class Item implements Serializable {
 		this.itemPedido = itemPedido;
 	}
 
-	/*
-	 * @Override public int hashCode() { return Objects.hash(id); }
-	 * 
-	 * @Override public boolean equals(Object obj) { if (this == obj) return true;
-	 * if (obj == null) return false; if (getClass() != obj.getClass()) return
-	 * false; Item other = (Item) obj; return Objects.equals(id, other.id); }
-	 */
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-	/*
-	 * @Override public String toString() { return "Item [id=" + id + ", nome=" +
-	 * nome + ", preco=" + preco + ", tipoItem=" + tipoItem + ", itemPedido=" +
-	 * itemPedido + "]"; }
-	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Item other = (Item) obj;
+		return Objects.equals(id, other.id);
+	}
 	
 }

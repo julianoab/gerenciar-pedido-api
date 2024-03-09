@@ -1,9 +1,12 @@
 package com.jab.gerenciapedidoapi.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+import org.antlr.v4.runtime.misc.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -26,6 +29,9 @@ public class Pedido implements Serializable {
     @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
+	
+	@Column(name = "data")
+	private LocalDate data;
 	
 	@Column(name = "valor_total")
 	private Double valorTotal;
@@ -85,6 +91,14 @@ public class Pedido implements Serializable {
 
 	public void setValorDesconto(Double valorDesconto) {
 		this.valorDesconto = valorDesconto;
+	}
+	
+	public LocalDate getData() {
+		return data;
+	}
+
+	public void setData(LocalDate data) {
+		this.data = data;
 	}
 
 	@Override

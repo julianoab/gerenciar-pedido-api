@@ -1,5 +1,6 @@
 package com.jab.gerenciapedidoapi.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,20 +39,42 @@ public class PedidoService {
 	public Optional<Pedido> buscarPorId(String id) {
 		return pedidoRepository.findById(UUID.fromString(id));
 	}
-
+	
+	@Transactional
 	public Pedido atualizar(Pedido pedido) {
 		Optional<Pedido> pedidoPersistido = pedidoRepository.findById(pedido.getId());
 		if (!pedidoPersistido.isPresent()) {
-			throw new IllegalArgumentException("Item não encontrado");
+			throw new IllegalArgumentException("Pedido não encontrado");
 		}
+		
+		List<ItemPedido> itensAremover = this.itemParaSeremDeletados(pedido, pedidoPersistido.get());
+		
+		if (itensAremover.size() > 0 && !itensAremover.isEmpty()) {
+			itemPedidoRepository.deleteAll(itensAremover);
+		}
+		
 		BeanUtils.copyProperties(pedido, pedidoPersistido.get(), "id");
-		return pedidoRepository.save(pedidoPersistido.get());
+		
+		return salvar(pedidoPersistido.get());
+	}
+	
+	public void deletarItemPedido(List<ItemPedido> itensPedido) {
+		itemPedidoRepository.deleteById(itensPedido.get(0).getId());
+	}
+	
+	private List<ItemPedido> itemParaSeremDeletados(Pedido pedidoAlterado, Pedido pedidoPersistido) {
+		List<ItemPedido> idItensASeremExcluidos = new ArrayList<>();
+		
+		for (ItemPedido itemPersistido : pedidoPersistido.getItens()) {
+			if (!pedidoAlterado.getItens().contains(itemPersistido)) {
+				idItensASeremExcluidos.add(itemPersistido);
+			}
+		}
+		return idItensASeremExcluidos;
 	}
 	
 	@Transactional
 	public Pedido salvar(Pedido pedido) {
-		
-		Pedido pedidoSalvo = null;
 		Double valorDesconto = 0.0;
 		
 		if (pedido != null) {
@@ -66,24 +89,22 @@ public class PedidoService {
 				valorDesconto = getValorDesconto(pedido);
 			}
 			
-			pedido.setValorTotal(calculaValorTotal(pedido.getItens()) - valorDesconto);
+			pedido.setValorTotal(calculaValorTotalItens(pedido.getItens()) - valorDesconto);
 			pedido.setValorDesconto(valorDesconto);
 			
-			pedidoSalvo = pedidoRepository.save(pedido);
+			pedido = pedidoRepository.save(pedido);
 			
 			itemPedidoRepository.saveAll(pedido.getItens());
 		}
 		
-		return pedidoSalvo;
+		return pedido;
 	}
 	
 	private boolean deveAplicarDesconto(Pedido pedido) {
 		
-		List<ItemPedido> itensPedidoTipoProduto = getItensTipoProduto(pedido);
-		
 		if (pedido.getPercentualDesconto() <= 0) {
 			return false;
-		} else if (itensPedidoTipoProduto.isEmpty()) {
+		} else if (getItensTipoProduto(pedido).isEmpty()) {
 			return false;
 		} 
 		
@@ -107,7 +128,7 @@ public class PedidoService {
 		return valorDesconto;
 	}
 	
-	private Double calculaValorTotal(List<ItemPedido> itemPedido) {
+	private Double calculaValorTotalItens(List<ItemPedido> itemPedido) {
 		Double valorTotal = 0.0;
 		for (ItemPedido item : itemPedido) {
 			valorTotal += item.getItem().getPreco() * item.getQuantidade();

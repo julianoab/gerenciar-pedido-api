@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jab.gerenciapedidoapi.model.Item;
+import com.jab.gerenciapedidoapi.model.SituacaoItem;
 import com.jab.gerenciapedidoapi.repository.ItemRepository;
 
 @Service
@@ -16,13 +17,15 @@ public class ItemService {
 	
 	@Autowired
 	private ItemRepository itemRepository;
+		
 	
-	public List<Item> listar() {
-		return itemRepository.findAll();
-	}
-	
-	public Item salvar(Item produtoServico) {
-		return itemRepository.save(produtoServico);
+    public List<Item> listar() { 
+    	return itemRepository.findAll();
+    }
+		
+	public Item salvar(Item item) {
+		item.setSituacaoItem(SituacaoItem.ATIVO);
+		return itemRepository.save(item);
 	}
 	
 	public Optional<Item> buscarPorId(String id) {
@@ -41,5 +44,12 @@ public class ItemService {
 		BeanUtils.copyProperties(item, itemPersitido.get(), "id");
 		return itemRepository.save(itemPersitido.get());
 	}
+
+	/*
+	 * public Page<Item> findPage(Integer pagina, Integer linhasPorPagina, String
+	 * orderBy, String direction) { PageRequest pageRequest = PageRequest.of(pagina,
+	 * linhasPorPagina, Direction.valueOf(direction), orderBy); return
+	 * itemRepository.findPage(pageRequest); }
+	 */
 	
 }

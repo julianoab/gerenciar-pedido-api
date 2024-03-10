@@ -28,14 +28,15 @@ public class ItemPedido implements Serializable {
 	private UUID id;
 	
 	@ManyToOne
-	@JoinColumn(name = "item_id")
+	@JoinColumn(name = "item_id", nullable = false)
 	private Item item;
 	
 	@JsonBackReference
 	@ManyToOne
-	@JoinColumn(name = "pedido_id")
+	@JoinColumn(name = "pedido_id", nullable = false)
 	private Pedido pedido;
 	
+	@Column(name = "quantidade", nullable = false)
 	private Integer quantidade;
 
 	public ItemPedido() {}

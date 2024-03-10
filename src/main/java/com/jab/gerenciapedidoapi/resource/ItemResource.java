@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jab.gerenciapedidoapi.model.Item;
 import com.jab.gerenciapedidoapi.repository.ItemRepository;
+import com.jab.gerenciapedidoapi.repository.filter.ItemFilter;
 import com.jab.gerenciapedidoapi.service.ItemService;
 
 @RestController
@@ -33,9 +36,14 @@ public class ItemResource {
 	private ItemRepository itemRepository;
 	
 	@GetMapping
-	public ResponseEntity<List<Item>> listar() {
-		List<Item> items = itemService.listar();
-		return ResponseEntity.ok(items);
+	public Page<Item> pesquisar(ItemFilter itemFilter, Pageable pageable) {
+		return itemRepository.filtrar(itemFilter, pageable);
+	}
+	
+	@GetMapping("/listar-todos") 
+	public ResponseEntity<List<Item>> listar() { 
+		List<Item> items = itemService.listar(); 
+		return ResponseEntity.ok(items); 
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

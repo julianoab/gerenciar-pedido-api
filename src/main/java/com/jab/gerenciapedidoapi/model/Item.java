@@ -1,9 +1,8 @@
 package com.jab.gerenciapedidoapi.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,16 +28,23 @@ public class Item implements Serializable {
     @GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
+	@Column(name = "nome", nullable = false)
 	private String nome;
 	
+	@Column(name = "preco", nullable = false)
 	private Double preco;
 	
 	@Enumerated(EnumType.STRING)
+	@Column(name = "tipo_item", nullable = false)
 	private TipoItem tipoItem;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "situacao_item", nullable = false)
+	private SituacaoItem situacaoItem;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "item")
-	private Set<ItemPedido> itemPedido = new HashSet<>();
+	private List<ItemPedido> itemPedido;
 	
 	public Item() {};
 	
@@ -80,12 +86,20 @@ public class Item implements Serializable {
 		this.tipoItem = tipoItem;
 	}
 
-	public Set<ItemPedido> getItemPedido() {
+	public List<ItemPedido> getItemPedido() {
 		return itemPedido;
 	}
 
-	public void setItemPedido(Set<ItemPedido> itemPedido) {
+	public void setItemPedido(List<ItemPedido> itemPedido) {
 		this.itemPedido = itemPedido;
+	}
+	
+	public SituacaoItem getSituacaoItem() {
+		return situacaoItem;
+	}
+
+	public void setSituacaoItem(SituacaoItem situacaoItem) {
+		this.situacaoItem = situacaoItem;
 	}
 
 	@Override
